@@ -1,0 +1,42 @@
+{
+  "name": "angular-simple-webrtc",
+  "version": "0.0.1",
+  "description": "simpleWebRTC service for AngularJS",
+  "main": "release/angular-simple-webrtc.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mdamt/angular-simple-webrtc"
+  },
+  "keywords": [
+    "webrtc",
+    "simplewebrtc",
+    "angular",
+    "video",
+    "audio",
+    "teleconference",
+    "voip",
+    "videoconference"
+  ],
+  "author": "Mohammad Anwari <mdamt@mdamt.net> (http://aksi.mdamt.net/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mdamt/angular-simple-webrtc/issues"
+  },
+  "devDependencies": {
+    "angular": "^1.4.4",
+    "angular-mocks": "^1.4.4",
+    "browserify": "^11.0.1",
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.13.9",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-cli": "^0.1.0",
+    "karma-jasmine": "^0.3.6",
+    "simplewebrtc": "^1.19.0"
+  }
+}
