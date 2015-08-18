@@ -70,6 +70,7 @@
       for (var i = 0; i < self.videoList.length; i ++) {
         var v = self.videoList[i];
         if (video.id === v.id) {
+          v = null;
           self.videoList.splice(i, 1);
           self.$rootScope.$broadcast('webrtc:videoListChanged');
           break;
