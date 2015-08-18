@@ -5,9 +5,9 @@ var SimpleWebRTCMock = function SimpleWebRTC(options) {
   this.S = new OriginalSimpleWebRTC(options);
 }
 
-SimpleWebRTCMock.prototype.emit = function(n, e) {
+SimpleWebRTCMock.prototype.emit = function(n, e, f) {
   var self = this;
-  self.S.emit(n, e);
+  self.S.emit(n, e, f);
 }
 
 SimpleWebRTCMock.prototype.on = function(n, e) {

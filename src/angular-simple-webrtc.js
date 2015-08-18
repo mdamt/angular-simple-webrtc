@@ -20,7 +20,7 @@
     self.webrtc = null;
     self.$rootScope = $rootScope;
     self.joinedRoom = '';
-    self.videoList = [];
+    self.streamList = [];
   };
 
   ngSimpleWebRTC.prototype.init = function(options) {
@@ -43,36 +43,37 @@
       var video = document.createElement('video');
       video.id = stream.id;
       video.src = URL.createObjectURL(stream);
-      video.isRemote = false;
       video.play();
-      self.videoList.push(video);
-      self.$rootScope.$broadcast('webrtc:videoListChanged');
+      stream.videoEl = video;
+      stream.isRemote = false;
+      self.streamList.push(stream);
+      self.$rootScope.$broadcast('webrtc:streamListChanged');
     });
 
     self.webrtc.on('videoAdded', function(video, peer) {
       var add = true;
-      for (var i = 0; i < self.videoList.length; i ++) {
-        var v = self.videoList[i];
-        if (video.id === v.id) {
+      for (var i = 0; i < self.streamList.length; i ++) {
+        var v = self.streamList[i];
+        if (peer.id === v.id) {
           add = false;
           break;
         }
       }
       if (add) {
-        video.isRemote = true;
-        self.videoList.push(video);
-        self.$rootScope.$broadcast('webrtc:videoListChanged');
+        peer.isRemote = true;
+        self.streamList.push(peer);
+        self.$rootScope.$broadcast('webrtc:streamListChanged');
       }
     });
 
     self.webrtc.on('videoRemoved', function(video) {
       var added = false;
-      for (var i = 0; i < self.videoList.length; i ++) {
-        var v = self.videoList[i];
-        if (video.id === v.id) {
+      for (var i = 0; i < self.streamList.length; i ++) {
+        var v = self.streamList[i];
+        if (video.id === v.videoEl.id) {
           v = null;
-          self.videoList.splice(i, 1);
-          self.$rootScope.$broadcast('webrtc:videoListChanged');
+          self.streamList.splice(i, 1);
+          self.$rootScope.$broadcast('webrtc:streamListChanged');
           break;
         }
       }
