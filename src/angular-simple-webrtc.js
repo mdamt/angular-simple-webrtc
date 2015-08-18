@@ -20,10 +20,12 @@
     self.webrtc = null;
     self.$rootScope = $rootScope;
     self.joinedRoom = '';
+    self.videoList = [];
   };
 
   ngSimpleWebRTC.prototype.init = function(options) {
     var self = this;
+    var URL = window.URL || window.webkitURL;
     self.options = options;
     self.webrtc = new SimpleWebRTC(options);
     self.webrtc.on('joinedRoom', function() {
@@ -35,6 +37,15 @@
       if (options.roomName) {
         self.webrtc.joinRoom(options.roomName);
       }
+    });
+
+    self.webrtc.on('localStream', function(stream) {
+      var video = document.createElement('video');
+      video.id = stream.id;
+      video.src = URL.createObjectURL(stream);
+      video.isRemote = false;
+      video.play();
+      self.videoList.push(video);
     });
   }
   
