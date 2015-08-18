@@ -45,22 +45,27 @@ describe('SimpleWebRTC', function() {
   });
 
   it('should populate videoList with local stream', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
     $SimpleWebRTC.init({roomName: 'room'});
     var s = new Blob(); 
     $SimpleWebRTC.webrtc.emit('localStream', s);
     expect($SimpleWebRTC.videoList.length).toBe(1);
     expect($SimpleWebRTC.videoList[0].isRemote).toBe(false);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
   });
 
   it('should populate videoList with remote streams', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
     $SimpleWebRTC.init({roomName: 'room'});
     var s = new Blob(); 
     $SimpleWebRTC.webrtc.emit('videoAdded', s);
     expect($SimpleWebRTC.videoList.length).toBe(1);
     expect($SimpleWebRTC.videoList[0].isRemote).toBe(true);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
   });
 
   it('should populate videoList with remote streams and handles duplicates', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
     $SimpleWebRTC.init({roomName: 'room'});
     var s = new Blob(); 
     s.id = 123;
@@ -68,9 +73,11 @@ describe('SimpleWebRTC', function() {
     $SimpleWebRTC.webrtc.emit('videoAdded', s);
     expect($SimpleWebRTC.videoList.length).toBe(1);
     expect($SimpleWebRTC.videoList[0].isRemote).toBe(true);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
   });
 
   it('should remove an entry from videoList', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
     $SimpleWebRTC.init({roomName: 'room'});
     var s = new Blob(); 
     s.id = 123;
@@ -88,6 +95,7 @@ describe('SimpleWebRTC', function() {
     expect($SimpleWebRTC.videoList.length).toBe(2);
     expect($SimpleWebRTC.videoList[0].id).toBe(123);
     expect($SimpleWebRTC.videoList[1].id).toBe(456);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
   });
 
 

@@ -46,6 +46,7 @@
       video.isRemote = false;
       video.play();
       self.videoList.push(video);
+      self.$rootScope.$broadcast('webrtc:videoListChanged');
     });
 
     self.webrtc.on('videoAdded', function(video, peer) {
@@ -60,6 +61,7 @@
       if (add) {
         video.isRemote = true;
         self.videoList.push(video);
+        self.$rootScope.$broadcast('webrtc:videoListChanged');
       }
     });
 
@@ -69,6 +71,7 @@
         var v = self.videoList[i];
         if (video.id === v.id) {
           self.videoList.splice(i, 1);
+          self.$rootScope.$broadcast('webrtc:videoListChanged');
           break;
         }
       }
@@ -88,12 +91,12 @@
   }
 
   ngSimpleWebRTC.prototype.pauseVideo = function() {
-    var self.this;
+    var self = this;
     self.webrtc.pauseVideo();
   }
 
   ngSimpleWebRTC.prototype.resumeVideo = function() {
-    var self.this;
+    var self = this;
     self.webrtc.resumeVideo();
   }
 
