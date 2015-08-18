@@ -19,13 +19,16 @@
     var self = this;
     self.webrtc = null;
     self.$rootScope = $rootScope;
+    self.joinedRoom = '';
   };
 
   ngSimpleWebRTC.prototype.init = function(options) {
     var self = this;
+    self.options = options;
     self.webrtc = new SimpleWebRTC(options);
     self.webrtc.on('joinedRoom', function() {
       self.$rootScope.$broadcast('webrtc:joinedRoom', options.roomName);
+      self.joinedRoom = options.roomName;
     });
 
     self.webrtc.on('readyToCall', function() {
@@ -39,6 +42,15 @@
     var self = this;
     return (self.webrtc != null);
   }
+
+  ngSimpleWebRTC.prototype.joinRoom = function(roomName) {
+    var self = this;
+    self.options.roomName = roomName;
+    self.joinedRoom = '';
+    self.webrtc.joinRoom(roomName);
+  }
+
+
 
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
 });

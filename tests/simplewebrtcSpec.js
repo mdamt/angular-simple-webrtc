@@ -31,7 +31,21 @@ describe('SimpleWebRTC', function() {
       $SimpleWebRTC.init({ roomName: 'room'});
       $SimpleWebRTC.webrtc.emit('readyToCall');
       expect($rootScope.$broadcast).toHaveBeenCalled();
+      expect($SimpleWebRTC.joinedRoom).toBe('room');
     });
+
+    it('should fire joinedRoom', function() {
+      spyOn($rootScope, '$broadcast').and.callThrough();
+      $rootScope.$on('webrtc:joinedRoom', function(f) {
+        expect(f.name).toBe('webrtc:joinedRoom');
+      });
+      $SimpleWebRTC.init({});
+      $SimpleWebRTC.webrtc.emit('readyToCall');
+      $SimpleWebRTC.joinRoom('room');
+      expect($rootScope.$broadcast).toHaveBeenCalled();
+      expect($SimpleWebRTC.joinedRoom).toBe('room');
+    });
+
 
 
   });
