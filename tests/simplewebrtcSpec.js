@@ -102,6 +102,26 @@ describe('SimpleWebRTC', function() {
     expect($rootScope.$broadcast).toHaveBeenCalled();
   });
 
+  it('should be able to pause a video stream', function() {
+    $SimpleWebRTC.init({roomName: 'room'});
+    var s = new Blob(); 
+    $SimpleWebRTC.webrtc.emit('localStream', s);
+    expect($SimpleWebRTC.isLocalVideoEnabled()).toBe(true);
+    $SimpleWebRTC.pauseVideo();
+    expect($SimpleWebRTC.isLocalVideoEnabled()).toBe(false);
+  });
+
+  it('should be able to pause and then resume a video stream', function() {
+    $SimpleWebRTC.init({roomName: 'room'});
+    var s = new Blob(); 
+    $SimpleWebRTC.webrtc.emit('localStream', s);
+    expect($SimpleWebRTC.isLocalVideoEnabled()).toBe(true);
+    $SimpleWebRTC.pauseVideo();
+    expect($SimpleWebRTC.isLocalVideoEnabled()).toBe(false);
+    $SimpleWebRTC.resumeVideo();
+    expect($SimpleWebRTC.isLocalVideoEnabled()).toBe(true);
+  });
+
 
 
 

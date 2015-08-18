@@ -92,6 +92,16 @@
     self.webrtc.joinRoom(roomName);
   }
 
+  ngSimpleWebRTC.prototype.isLocalVideoEnabled = function() {
+    var self = this;
+    for (var i = 0; i < self.streamList.length; i ++) {
+      var s = self.streamList[i];
+      if (s.isRemote == false) {
+        return s.getVideoTracks()[0].enabled;
+      }
+    }
+  }
+
   ngSimpleWebRTC.prototype.pauseVideo = function() {
     var self = this;
     self.webrtc.pauseVideo();
