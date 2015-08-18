@@ -1,6 +1,3 @@
-var ngSimpleWebRTC = function() {
-};
-
 (function(root, factory) {
 'use strict';
   if(typeof define === 'function' && define.amd) {                    // AMD
@@ -17,6 +14,31 @@ var ngSimpleWebRTC = function() {
   'use strict';
 
   var ngSimpleWebRTCModule = angular.module('SimpleWebRTCModule', ['ng']);
+  
+  var ngSimpleWebRTC = function($rootScope) {
+    var self = this;
+    self.webrtc = null;
+    self.$rootScope = $rootScope;
+  };
+
+  ngSimpleWebRTC.prototype.init = function(options) {
+    var self = this;
+    self.webrtc = new SimpleWebRTC(options);
+    self.webrtc.on('joinedRoom', function() {
+      self.$rootScope.$broadcast('webrtc:joinedRoom', options.roomName);
+    });
+
+    self.webrtc.on('readyToCall', function() {
+      if (options.roomName) {
+        self.webrtc.joinRoom(options.roomName);
+      }
+    });
+  }
+  
+  ngSimpleWebRTC.prototype.isInitialized = function() {
+    var self = this;
+    return (self.webrtc != null);
+  }
 
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
 });
