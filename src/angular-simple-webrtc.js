@@ -47,6 +47,32 @@
       video.play();
       self.videoList.push(video);
     });
+
+    self.webrtc.on('videoAdded', function(video, peer) {
+      var add = true;
+      for (var i = 0; i < self.videoList.length; i ++) {
+        var v = self.videoList[i];
+        if (video.id === v.id) {
+          add = false;
+          break;
+        }
+      }
+      if (add) {
+        video.isRemote = true;
+        self.videoList.push(video);
+      }
+    });
+
+    self.webrtc.on('videoRemoved', function(video) {
+      var added = false;
+      for (var i = 0; i < self.videoList.length; i ++) {
+        var v = self.videoList[i];
+        if (video.id === v.id) {
+          self.videoList.splice(i, 1);
+          break;
+        }
+      }
+    });
   }
   
   ngSimpleWebRTC.prototype.isInitialized = function() {
@@ -61,7 +87,15 @@
     self.webrtc.joinRoom(roomName);
   }
 
+  ngSimpleWebRTC.prototype.pauseVideo = function() {
+    var self.this;
+    self.webrtc.pauseVideo();
+  }
 
+  ngSimpleWebRTC.prototype.resumeVideo = function() {
+    var self.this;
+    self.webrtc.resumeVideo();
+  }
 
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
 });
