@@ -9,6 +9,7 @@ module.exports = function(karma) {
       'node_modules/angular/angular.js',
       'node_modules/angular-mocks/angular-mocks.js',
       'node_modules/simplewebrtc/simplewebrtc.bundle.js',
+      'tests/simplewebrtcMock.js',
       'src/**/*.js',
       'tests/**/*Spec.js'
     ],
