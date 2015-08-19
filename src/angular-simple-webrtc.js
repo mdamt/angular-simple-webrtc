@@ -39,6 +39,10 @@
       }
     });
 
+    self.webrtc.on('createdPeer', function(peer) {
+      self.setupPeer(peer);
+    });
+
     self.webrtc.on('localStream', function(stream) {
       var video = document.createElement('video');
       video.id = stream.id;
@@ -135,7 +139,64 @@
     }
   }
 
+  ngSimpleWebRTC.prototype.getPeers = function() {
+    var self = this;
+    return self.webrtc.getPeers();
+  }
 
+  ngSimpleWebRTC.prototype.setupPeer = function(peer) {
+    var self = this;
+    peer.on('fileTransfer', function(metadata, receiver) {
+      self.handleFileTransfer(peer, metadata, receiver);
+    });
+    self.$rootScope.$broadcast('webrtc:peerCreated', peer);
+  }
+
+  ngSimpleWebRTC.prototype.handleFileTransfer = function(peer, metadata, receiver) {
+    var self = this;
+
+    self.$rootScope.$broadcast('webrtc:fileTransferStarted', {
+      peer: peer,
+      metadata: metadata,
+      receiver: receiver
+    });
+    receiver.on('progress', function(byteReceived) {
+      self.$rootScope.$broadcast('webrtc:fileTransferProgress', {
+        peer: peer,
+        metadata: metadata,
+        byteReceived: byteReceived
+      });
+    });
+    receiver.on('receivedFile', function(file, metadata) {
+      self.$rootScope.$broadcast('webrtc:fileTransferDone', {
+        peer: peer,
+        metadata: metadata,
+        file: file
+      });
+      receiver.channel.close();
+    });
+  }
+
+  ngSimpleWebRTC.prototype.sendFile = function(peer, file) {
+    var self = this;
+    
+    var sender = peer.sendFile(file);
+    sender.on('progress', function(byteSent) {
+      self.$rootScope.$broadcast('webrtc:sentFileProgress', {
+        peer: peer,
+        byteSent: byteSent
+      });
+    });
+
+    sender.on('sentFile', function(byteSent) {
+      self.$rootScope.$broadcast('webrtc:sentFileDone', peer);
+    });
+
+    sender.on('complete', function(byteSent) {
+      self.$rootScope.$broadcast('webrtc:sentFileReceived', peer);
+    });
+    return sender;
+  }
 
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
 });

@@ -142,7 +142,115 @@ describe('SimpleWebRTC', function() {
     expect($SimpleWebRTC.isMuted()).toBe(false);
   });
 
+  it('should be able to receive files', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
+    var e = 0;
+    var progress;
+    $rootScope.$on('webrtc:peerCreated', function(f) {
+      expect(f.name).toBe('webrtc:peerCreated');
+      e ++;
+    });
 
+    $rootScope.$on('webrtc:fileTransferStarted', function(f, v) {
+      expect(f.name).toBe('webrtc:fileTransferStarted');
+      expect(v.metadata.name).toBe(metadata.name);
+      expect(v.metadata.size).toBe(metadata.size);
+      e ++;
+    });
+
+    $rootScope.$on('webrtc:fileTransferProgress', function(f, v) {
+      expect(f.name).toBe('webrtc:fileTransferProgress');
+      expect(progress).toBe(v.byteReceived);
+      expect(v.metadata.name).toBe(metadata.name);
+      expect(v.metadata.size).toBe(metadata.size);
+      e ++;
+    });
+
+    $rootScope.$on('webrtc:fileTransferDone', function(f, v) {
+      expect(f.name).toBe('webrtc:fileTransferDone');
+      expect(v.metadata.name).toBe(metadata.name);
+      expect(v.metadata.size).toBe(metadata.size);
+      e ++;
+    });
+
+    $SimpleWebRTC.init({roomName: 'room'});
+    var s = new Peer(); 
+    var metadata = {
+      name: 'abc',
+      size: 512
+    };
+    var receiver = new Receiver();
+    $SimpleWebRTC.webrtc.emit('createdPeer', s);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(1);
+    s.emit('fileTransfer', metadata, receiver);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(2);
+    progress = 10;
+    receiver.emit('progress', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(3);
+    progress = 30;
+    receiver.emit('progress', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(4);
+    progress = 512;
+    var file = new Blob();
+    receiver.emit('receivedFile', file, metadata);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(5);
+  });
+
+  it('should be able to get peers', function() {
+    $SimpleWebRTC.init({roomName: 'room'});
+    var peerList = $SimpleWebRTC.getPeers();
+    expect(peerList.length).toBe(5);
+  });
+
+  it('should be able to send files', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
+    var e = 0;
+    var progress;
+
+    $rootScope.$on('webrtc:sentFileProgress', function(f, v) {
+      expect(f.name).toBe('webrtc:sentFileProgress');
+      expect(progress).toBe(v.byteSent);
+      e ++;
+    });
+
+    $rootScope.$on('webrtc:sentFileDone', function(f, v) {
+      expect(f.name).toBe('webrtc:sentFileDone');
+      e ++;
+    });
+
+    $rootScope.$on('webrtc:sentFileReceived', function(f, v) {
+      expect(f.name).toBe('webrtc:sentFileReceived');
+      e ++;
+    });
+
+    $SimpleWebRTC.init({roomName: 'room'});
+    var s = new Peer(); 
+    var file = {
+      name: 'abc',
+      size: 512
+    };
+
+    var sender = $SimpleWebRTC.sendFile(s, file);
+    progress = 10;
+    sender.emit('progress', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(1);
+    progress = 30;
+    sender.emit('progress', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(2);
+    sender.emit('sentFile', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(3);
+    sender.emit('complete', progress);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(4);
+  });
 
 
 });
