@@ -112,5 +112,30 @@
     self.webrtc.resumeVideo();
   }
 
+  ngSimpleWebRTC.prototype.mute = function() {
+    var self = this;
+    self.webrtc.mute();
+  }
+
+  ngSimpleWebRTC.prototype.unmute = function() {
+    var self = this;
+    self.webrtc.unmute();
+  }
+
+  ngSimpleWebRTC.prototype.isMuted = function() {
+    var self = this;
+    for (var i = 0; i < self.streamList.length; i ++) {
+      var s = self.streamList[i];
+      if (s.isRemote == false) {
+        var audio = s.getAudioTracks();
+        if (audio && audio.length > 0) {
+          return !audio[0].enabled;
+        }
+      }
+    }
+  }
+
+
+
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
 });

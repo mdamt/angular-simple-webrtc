@@ -3,6 +3,7 @@ var SimpleWebRTCMock = function SimpleWebRTC(options) {
   var self = this;
   self.localStream = null;
   self.localStreamEnabled = true;
+  self.localStreamAudioEnabled = true;
 
   this.S = new OriginalSimpleWebRTC(options);
 }
@@ -18,6 +19,13 @@ SimpleWebRTCMock.prototype.emit = function(n, e, f) {
       }
       return [obj];
     }
+    self.localStream.getAudioTracks = function() {
+      var obj = {
+        enabled: self.localStreamAudioEnabled
+      }
+      return [obj];
+    }
+
   }
 
 }
@@ -40,6 +48,16 @@ SimpleWebRTCMock.prototype.pauseVideo = function(r) {
 SimpleWebRTCMock.prototype.resumeVideo = function(r) {
   var self = this;
   self.localStreamEnabled = true;
+}
+
+SimpleWebRTCMock.prototype.mute = function(r) {
+  var self = this;
+  self.localStreamAudioEnabled = false;
+}
+
+SimpleWebRTCMock.prototype.unmute = function(r) {
+  var self = this;
+  self.localStreamAudioEnabled = true;
 }
 
 var OriginalSimpleWebRTC = SimpleWebRTC;
