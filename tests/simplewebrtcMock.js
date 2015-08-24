@@ -61,11 +61,14 @@ var SimpleWebRTCMock = function SimpleWebRTC(options) {
   self.localStreamAudioEnabled = true;
 
   this.S = new OriginalSimpleWebRTC(options);
+  self.handler = {};
+
 }
 
-SimpleWebRTCMock.prototype.emit = function(n, e, f) {
+SimpleWebRTCMock.prototype.emit = function(n, e, f, g) {
   var self = this;
-  self.S.emit(n, e, f);
+  self.handler[n].call(this, e, f, g);
+
   if (n == "localStream") {
     self.localStream = e;
     self.localStream.getVideoTracks = function() {
@@ -88,12 +91,12 @@ SimpleWebRTCMock.prototype.on = function(n, e) {
   if (n == "createdPeer") {
     new Peer(e);
   }
-  self.S.on(n, e);
+  self.handler[n] = e;
 }
 
 SimpleWebRTCMock.prototype.joinRoom = function(r) {
   var self = this;
-  self.S.emit('joinedRoom');
+  self.emit('joinedRoom');
 }
 
 SimpleWebRTCMock.prototype.pauseVideo = function(r) {
@@ -122,6 +125,11 @@ SimpleWebRTCMock.prototype.getPeers = function(r) {
     x.push(new Peer());
   }
   return x;
+}
+
+SimpleWebRTCMock.prototype.sendDirectlyToAll = function(t, l, p) {
+  var self = this;
+  self.emit('channelMessage', {}, t, {type:'text/plain', payload: p});
 }
 
 var OriginalSimpleWebRTC = SimpleWebRTC;

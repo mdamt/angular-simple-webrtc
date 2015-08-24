@@ -82,8 +82,29 @@
         }
       }
     });
+
+    self.webrtc.on('channelMessage', function(peer, label, data) {
+      if (label === 'text-message' &&
+          data.type === 'text/plain') {
+          self.$rootScope.$broadcast('webrtc:textMessage', {
+            peer: peer,
+            message: data.payload.message,
+            time: data.payload.time
+          });
+      }
+    });
   }
   
+  ngSimpleWebRTC.prototype.sendTextMessage = function(message) {
+    var self = this;
+    self.webrtc.sendDirectlyToAll("text-message", 
+    "text/plain", 
+    {
+      message: message,
+      time: (new Date()).valueOf()
+    });
+  }
+
   ngSimpleWebRTC.prototype.isInitialized = function() {
     var self = this;
     return (self.webrtc != null);

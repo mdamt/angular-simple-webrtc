@@ -252,5 +252,27 @@ describe('SimpleWebRTC', function() {
     expect(e).toBe(4);
   });
 
+  it('should be able to send text message', function() {
+    spyOn($rootScope, '$broadcast').and.callThrough();
+    var e = 0;
+    var progress;
+
+    $rootScope.$on('webrtc:textMessage', function(f, v) {
+      expect(f.name).toBe('webrtc:textMessage');
+      expect(message).toBe(v.message);
+      expect(time).toBe(v.time);
+      e ++;
+    });
+
+    var message = 'omama';
+    $SimpleWebRTC.init({roomName: 'room'});
+    var time = (new Date()).valueOf();
+    $SimpleWebRTC.sendTextMessage(message);
+    expect($rootScope.$broadcast).toHaveBeenCalled();
+    expect(e).toBe(1);
+  });
+
+
+
 
 });
