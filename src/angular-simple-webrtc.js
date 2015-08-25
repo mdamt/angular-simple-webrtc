@@ -50,6 +50,7 @@
       video.play();
       stream.videoEl = video;
       stream.isRemote = false;
+      stream.isShown = true;
       self.streamList.push(stream);
       self.$rootScope.$broadcast('webrtc:streamListChanged');
     });
@@ -70,8 +71,52 @@
       }
     });
 
+    self.webrtc.on('videoAdded', function(video, peer) {
+      var add = true;
+      var map = {};
+      console.log(arguments);
+      for (var i = 0; i < self.streamList.length; i ++) {
+        var v = self.streamList[i];
+        v.isShown = true;
+        map[v.id] = map[v.id] || {};
+        map[v.id][v.type] = v;
+      }
+
+      peer.isShown = true;
+      var dupe = map[peer.id];
+      if (dupe) {
+        if (dupe['video'] && peer.type === 'screen') {
+          dupe['video'].isShown = false; 
+        } else if (dupe['video'].type === peer.type) {
+          return;
+        } else if (dupe['screen'].type === peer.type) {
+          return;
+        } else {
+          peer.isShown = false;
+        }
+      } 
+      peer.isRemote = true;
+      self.streamList.push(peer);
+      self.$rootScope.$broadcast('webrtc:streamListChanged');
+    });
+
+
     self.webrtc.on('videoRemoved', function(video) {
       var added = false;
+      var map = {};
+      for (var i = 0; i < self.streamList.length; i ++) {
+        var v = self.streamList[i];
+        v.isShown = true;
+        map[v.id] = map[v.id] || {};
+        map[v.id][v.type] = v;
+      }
+      var dupe = map[video.id];
+      if (dupe) {
+        if (dupe['video']) {
+          dupe.isShown = true;
+        }
+      }
+
       for (var i = 0; i < self.streamList.length; i ++) {
         var v = self.streamList[i];
         if (video.id === v.videoEl.id) {
