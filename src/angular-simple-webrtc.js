@@ -97,6 +97,13 @@
         }
       } 
       peer.isRemote = true;
+      if (peer && peer.pc) {
+        peer.pc.on('iceConnectionStateChange', function (event) {
+          console.log(peer.pc.iceConnectionState);
+          self.$rootScope.$broadcast('webrtc:streamListChanged');
+        });
+      }
+
       self.streamList.push(peer);
       self.$rootScope.$broadcast('webrtc:streamListChanged');
     });
