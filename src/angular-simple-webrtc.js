@@ -77,9 +77,10 @@
       console.log(arguments);
       for (var i = 0; i < self.streamList.length; i ++) {
         var v = self.streamList[i];
+        var type = v.type || 'video';
         v.isShown = true;
         map[v.id] = map[v.id] || {};
-        map[v.id][v.type] = v;
+        map[v.id][type] = v;
       }
 
       peer.isShown = true;
@@ -87,9 +88,9 @@
       if (dupe) {
         if (dupe['video'] && peer.type === 'screen') {
           dupe['video'].isShown = false; 
-        } else if (dupe['video'].type === peer.type) {
+        } else if (dupe['video'] && dupe['video'].type === peer.type) {
           return;
-        } else if (dupe['screen'].type === peer.type) {
+        } else if (dupe['video'] && dupe['screen'].type === peer.type) {
           return;
         } else {
           peer.isShown = false;
