@@ -272,5 +272,7 @@
     return sender;
   }
 
+  ngSimpleWebRTC.$inject = [ "$rootScope" ];
   ngSimpleWebRTCModule.service('$SimpleWebRTC', ngSimpleWebRTC);
+
 });
