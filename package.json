@@ -1,6 +1,6 @@
 {
   "name": "angular-simple-webrtc",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "simpleWebRTC service for AngularJS",
   "main": "src/angular-simple-webrtc.js",
   "directories": {
