@@ -6,7 +6,7 @@
     });
   } else if(typeof exports === 'object' || typeof global === 'object') {
     var angular = root.angular || (window && window.angular);
-    module.exports = factory(angular, require('simplewebrtc')); // Node/Browserify
+    module.exports = factory(angular, require('simplewebrtc-newsocketio')); // Node/Browserify
   } else {
     factory(root.angular, root.SimpleWebRTC);                        // Browser
   }

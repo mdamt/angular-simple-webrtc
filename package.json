@@ -37,6 +37,6 @@
     "karma-chrome-launcher": "^0.2.0",
     "karma-cli": "^0.1.0",
     "karma-jasmine": "^0.3.6",
-    "simplewebrtc": "^1.19.0"
+    "simplewebrtc-newsocketio": "^1.19.0"
   }
 }
